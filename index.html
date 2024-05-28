@@ -338,7 +338,15 @@
 
 
 
-
+        // Need exceptions for:
+        // Rabble Rousing
+        // Shadow Runner
+        // Orbital Laser
+        // Homeguard
+        // Guilty Pleasure
+        // Courage of the Colossus
+        // Contract Killer
+        // Blood Brother
 
 
         function populateDescriptionVariables(augment) {
@@ -366,10 +374,10 @@
                 console.log("value", varValue);
                 if (multiplier) {
                     varValue = eval(varValue + multiplier);
-
                 }
 
-                varValue = Math.round(varValue);
+                varValue = Math.fround(varValue);
+                varValue = Math.floor(varValue * 100)/100;
 
                 console.log("substring", isolatedVarName);
                 console.log("value final", varValue);
@@ -521,9 +529,10 @@
     <br>
 
     <div>
-        <label for="titleInput">Title</label>
-        <textarea name="titleInput" id="titleInput" oninput="updateCanvasVariable(this.value, 'augmentTitle')"></textarea>
-        <br>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <label for="titleInput" style="margin-right: 8px;">Title</label>
+            <textarea name="titleInput" id="titleInput" oninput="updateCanvasVariable(this.value, 'augmentTitle')"></textarea>
+        </div>
         <br>
         <label for="titleFontInput">Title Font</label>
         <input name="titleFontInput" id="titleFontInput" oninput="updateCanvasVariable(this.value, 'titleFont')"/>
@@ -541,7 +550,7 @@
         <textarea name="descriptionInput" id="descriptionInput" oninput="updateCanvasVariable(this.value, 'augmentDescription')"></textarea>
         <br>
         <br>
-        <label for="descriptionFontInput">Title Font</label>
+        <label for="descriptionFontInput">Description Font</label>
         <input name="descriptionFontInput" id="descriptionFontInput" oninput="updateCanvasVariable(this.value, 'descriptionFont')"/>
         <form class="sliderForm" oninput="descriptionYOutput.value = settings['descriptionYOffset']">
             <label for="descriptionYOffset">Description Y Offset</label>
@@ -556,8 +565,7 @@
 <div class="rightColumn">
     <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
         <input type="text" id="championSearchInput" oninput="updateChampionSearch(this.value)">
-
-        <span style="font-size: 25px; cursor: pointer; padding-bottom: 4px;" onclick="updateAugmentSearch(''); document.getElementById('augmentSearchInput').value = '';">✖</span>
+        <span style="font-size: 25px; cursor: pointer; padding-bottom: 4px;" onclick="updateChampionSearch(''); document.getElementById('championSearchInput').value = '';">✖</span>
     </div>
 
     <div class="list" id="championsList">
@@ -650,7 +658,15 @@
         width: 33%;
     }
 
-    .leftColumn input {
+    #augmentSearchInput {
+        margin: 8px 8px;
+        height: 30px;
+        width: 200px;
+        border-radius: 10px;
+        font-size: 20px;
+    }
+
+    #championSearchInput {
         margin: 8px 8px;
         height: 30px;
         width: 200px;
