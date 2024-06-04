@@ -6,6 +6,8 @@
 
     <script>
 
+
+
         function createHiPPICanvas(width, height) {
             const ratio = window.devicePixelRatio;
             const canvas = document.createElement("canvas");
@@ -18,7 +20,6 @@
 
             return canvas;
         }
-
 
 
         // Modified from https://github.com/lukechilds/merge-images/blob/master/src/index.js
@@ -97,12 +98,11 @@
 
                     if (title) {
                         ctx.font = settings['titleFont'];
-                        ctx.textAlign = "center";
                         ctx.fillStyle = "white";
                         const maxWidth = 230;
                         wrapText(ctx, title, 256, settings['titleYOffset'], maxWidth, 20)
                         ctx.font = settings['descriptionFont'];
-                        wrapText(ctx, description, 256, settings['descriptionYOffset'], maxWidth, 20)
+                        wrapText(ctx, description, 256, settings['descriptionYOffset'], maxWidth, 18)
                     }
 
                     if (options.Canvas && options.format === 'image/jpeg') {
@@ -126,7 +126,7 @@
                 }));
         });
 
-        function wrapText(context, text, x, y, maxWidth, lineHeight = 20) {
+        function wrapText(context, text, x, y, maxWidth, lineHeight = 16) {
             // First respect the user's line breaks
             const linebreakLines = text.split("\n");
 
@@ -134,17 +134,22 @@
             const finalLines = [];
             linebreakLines.forEach((line) => finalLines.push(...getLines(context, line, maxWidth)))
 
-            finalLines.forEach((line, index) => context.fillText(line, x, (y + (index * lineHeight))));
+            let inRulesSection = false;
+            finalLines.forEach((line, index) => inRulesSection = writeCharacters(context, line, x, (y + (index * lineHeight)), inRulesSection));
         }
 
         function getLines(ctx, text, maxWidth) {
-            var words = text.split(" ");
-            var lines = [];
-            var currentLine = words[0];
+            let words = text.split(" ");
+            let lines = [];
+            let currentLine = words[0];
 
-            for (var i = 1; i < words.length; i++) {
-                var word = words[i];
-                var width = ctx.measureText(currentLine + " " + word).width;
+            for (let i = 1; i < words.length; i++) {
+                let word = words[i];
+
+                const wordNoTags = word.replaceAll(/(<([^>]+)>)/gi, "");
+                const currentLineNoTags = currentLine.replaceAll(/(<([^>]+)>)/gi, "");
+
+                let width = ctx.measureText(currentLineNoTags + " " + wordNoTags).width;
                 if (width < maxWidth) {
                     currentLine += " " + word;
                 } else {
@@ -156,7 +161,63 @@
             return lines;
         }
 
+        const colorTable = {
+            scaleBonus: "#c9aa71",
+            magicDamage: "#00B0F0",
+            physicalDamage: "orange",
+            recast: "rgb(255,143,97)",
+            rules: "rgb(255, 255, 255, 0.4)",
+            healing: "#60b087",
+            shield: '#70b3b4',
+            status: '#b29cc0',
+            spellName: '#dad2b5'
+        }
 
+        function writeCharacters(ctx, str, x, y, inRulesSection) {
+            const strNoTags = str.replaceAll(/(<([^>]+)>)/gi, "");
+
+            const lineWidth = ctx.measureText(strNoTags).width;
+            const xCenterAdjustment = lineWidth / 2;
+
+            console.log(str);
+
+            for(let i = 0; i <= str.length; ++i) {
+                let ch = str.charAt(i);
+
+                // Color Formatting
+                if (ch === "<") {
+                    const endOfTag = str.indexOf(">", i);
+                    if (endOfTag !== -1) {
+                        const colorName = str.substring(i + 1, endOfTag);
+                        const colorValue = colorTable[colorName];
+                        if (colorValue) {
+                            ctx.fillStyle = colorValue;
+                            if (colorName === "rules") {
+                                ctx.font = "italic";
+                                inRulesSection = true;
+                                console.log("got rules");
+                            }
+                        } else {
+                            // Continue with rules formatting until the rules section ends
+                            if (inRulesSection) {
+                                console.log('rulesss');
+                                ctx.fillStyle = colorTable["rules"];
+                                ctx.font = "italic";
+                            } else {
+                                ctx.fillStyle = "white";
+                                inRulesSection = false;
+                            }
+                        }
+                        i += endOfTag - i;
+                        continue;
+                    }
+                }
+
+                ctx.fillText(ch, x - xCenterAdjustment, y);
+                x += Math.round(ctx.measureText(ch).width);
+            }
+            return inRulesSection;
+        }
 
 
 
@@ -189,7 +250,7 @@
             iconXOffset: 156,
             iconYOffset: 40,
             titleFont: "bold 24px LolBeautfortBold",
-            descriptionFont: "16px LolBeautfort",
+            descriptionFont: "14px LolBeautfort",
             selectedChampion: null,
             titleYOffset: 324,
             descriptionYOffset: 364,
@@ -218,7 +279,7 @@
         }
 
         function setDefaultDescriptionFont() {
-            settings['descriptionFont'] = "16px LolBeautfort";
+            settings['descriptionFont'] = "14px LolBeautfort";
             document.getElementById("descriptionFontInput").value = "16px LolBeautfort";
         }
 
@@ -349,7 +410,7 @@
         // Blood Brother
 
 
-        function populateDescriptionVariables(augment) {
+        function populateDescriptionVariables() {
             let description = settings['selectedAugment']['desc'];
             const dataValues = settings['selectedAugment']['dataValues'];
 
@@ -365,13 +426,11 @@
                     asteriskIndex = varName.indexOf("*");
                     multiplier = varName.substring(asteriskIndex, varName.length - 1);
                 }
-                console.log(varName);
 
                 const isolatedVarName = varName.substring(1, asteriskIndex ? asteriskIndex : (varName.length - 1));
 
                 let varValue = dataValues[isolatedVarName];
 
-                console.log("value", varValue);
                 if (multiplier) {
                     varValue = eval(varValue + multiplier);
                 }
@@ -379,17 +438,12 @@
                 varValue = Math.fround(varValue);
                 varValue = Math.floor(varValue * 100)/100;
 
-                console.log("substring", isolatedVarName);
-                console.log("value final", varValue);
-                console.log("multiplier", multiplier)
-
-                description = description.replace(varName, varValue);
+                description = description.replaceAll(varName, varValue);
             }
 
-            // TODO: Do something with the tags, for now just remove them
-            let modifiedDescription = description.replace("<br>", "\n");
-            modifiedDescription = modifiedDescription.replace(/((%i.+)% )/gi, "");;
-            return modifiedDescription.replace(/(<([^>]+)>)/gi, "");
+            let modifiedDescription = description.replaceAll("<br>", "\n");
+            return modifiedDescription.replaceAll(/((%i.+)% )/gi, "");
+            // return modifiedDescription.replace(/(<([^>]+)>)/gi, "");
         }
 
         function setSelectedAugment(id) {
@@ -414,7 +468,7 @@
 
             settings['augmentTitle'] = settings['selectedAugment']['name'];
             document.getElementById('titleInput').value = settings['augmentTitle'];
-            settings['augmentDescription'] = populateDescriptionVariables(settings['selectedAugment']);
+            settings['augmentDescription'] = populateDescriptionVariables();
             document.getElementById('descriptionInput').value = settings['augmentDescription'];
 
             mergeAugmentImages();
@@ -437,18 +491,18 @@
             // For augments
             if (settings['selectedAugment'] !== null) {
                 iconImage = communityDragonBaseUrl + settings['selectedAugment']['iconLarge'];
-                iconSize = 200;
-                imagePositionOffsets = {2:[settings['iconXOffset'], settings['iconYOffset']]};
+                iconSize = 150;
+                // imagePositionOffsets = {2:[settings['iconXOffset'], settings['iconYOffset']]};
             } else if (settings['selectedChampion'] !== null) {
                 iconImage = baseSquarePortraitPath + settings['selectedChampion']['id'] + ".png";
                 iconSize = 150;
-                const modifiedXOffset = parseInt(settings['iconXOffset']) + 25;
-                const modifiedYOffset = parseInt(settings['iconYOffset']) + 30;
-                imagePositionOffsets = {2:[modifiedXOffset, modifiedYOffset]};
             } else {
                 return;
-
             }
+
+            const modifiedXOffset = parseInt(settings['iconXOffset']) + 25;
+            const modifiedYOffset = parseInt(settings['iconYOffset']) + 10;
+            imagePositionOffsets = {2:[modifiedXOffset, modifiedYOffset]};
 
             const images = [augmentFrameBaseUrl + borderImages['augmentcard_bg'],
                 augmentFrameBaseUrl + settings['selectedFrame'],
