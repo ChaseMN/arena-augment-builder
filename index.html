@@ -432,6 +432,7 @@
                 let varValue = dataValues[isolatedVarName];
 
                 if (multiplier) {
+                    // Use something safer than eval later
                     varValue = eval(varValue + multiplier);
                 }
 
