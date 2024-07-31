@@ -223,7 +223,7 @@
 
 
 
-        const arenaJsonDataUrl = "https://raw.communitydragon.org/pbe/cdragon/arena/en_us.json";
+        const arenaJsonDataUrl = "https://raw.communitydragon.org/pbe/cdragon/arena/";
         const championJsonDataUrl = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json";
         const communityDragonBaseUrl = "https://raw.communitydragon.org/pbe/game/";
 
@@ -258,6 +258,7 @@
             descriptionYOffset: 364,
             titleLineHeight: 26,
             descriptionLineHeight: 18,
+            language: 'en_us',
         };
 
         let arenaJsonData = null;
@@ -321,9 +322,7 @@
         }
 
         async function getArenaJson() {
-            const response = await fetch(arenaJsonDataUrl);
-            arenaJsonData = (await response.json())['augments'].sort(compareNames);
-
+            await getAugmentData();
             setDefaultTitleFont()
             setDefaultDescriptionFont()
             setSelectedAugment(1);
@@ -331,10 +330,10 @@
             filterAugments();
         }
 
-
-
-
-
+        async function getAugmentData() {
+            const response = await fetch(arenaJsonDataUrl + settings['language'] + '.json');
+            arenaJsonData = (await response.json())['augments'].sort(compareNames);
+        }
 
         function getChampionIcon(champion, type) {
             return communityDragonBaseUrl + "assets/characters/" + champion + "/hud/" + champion + "_" + type + ".png";
@@ -530,6 +529,13 @@
             mergeAugmentImages();
         }
 
+        async function setLanguage(value) {
+            settings['language'] = value;
+            await getAugmentData();
+            setSelectedAugment(settings['selectedAugment']['id'])
+            mergeAugmentImages();
+        }
+
 
         async function init() {
             let p1 = getArenaJson()
@@ -582,6 +588,36 @@
         <option value="augmentcard_sheenglow_silver">Shiny Silver</option>
         <option value="augmentcard_sheenglow_gold">Shiny Gold</option>
         <option value="augmentcard_sheenglow_prismatic">Shiny Prismatic</option>
+    </select>
+    <label for="languageSelect">Language</label>
+    <select id="languageSelect" oninput="setLanguage(this.value)">
+        <option value="ar_ae">ar_ae</option>
+        <option value="cs_cz">cs_cz</option>
+        <option value="de_de">de_de</option>
+        <option value="el_gr">el_gr</option>
+        <option value="en_au">en_au</option>
+        <option value="en_gb">en_gb</option>
+        <option value="en_ph">en_ph</option>
+        <option value="en_sg">en_sg</option>
+        <option value="en_us" selected>en_us</option>
+        <option value="es_ar">es_ar</option>
+        <option value="es_es">es_es</option>
+        <option value="es_mx">es_mx</option>
+        <option value="fr_fr">fr_fr</option>
+        <option value="hu_hu">hu_hu</option>
+        <option value="it_it">it_it</option>
+        <option value="ja_jp">ja_jp</option>
+        <option value="ko_kr">ko_kr</option>
+        <option value="pl_pl">pl_pl</option>
+        <option value="pt_br">pt_br</option>
+        <option value="ro_ro">ro_ro</option>
+        <option value="ru_ru">ru_ru</option>
+        <option value="th_th">th_th</option>
+        <option value="tr_tr">tr_tr</option>
+        <option value="vi_vn">vi_vn</option>
+        <option value="zh_cn">zh_cn</option>
+        <option value="zh_my">zh_my</option>
+        <option value="zh_tw">zh_tw</option>
     </select>
 
     <br>
