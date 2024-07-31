@@ -100,9 +100,10 @@
                         ctx.font = settings['titleFont'];
                         ctx.fillStyle = "white";
                         const maxWidth = 230;
-                        wrapText(ctx, title, 256, settings['titleYOffset'], maxWidth, 20)
+                        // If the title is multiple lines, push down the description automatically
+                        const numberOfTitleLines = wrapText(ctx, title, 256, settings['titleYOffset'], maxWidth, settings['titleLineHeight'])
                         ctx.font = settings['descriptionFont'];
-                        wrapText(ctx, description, 256, settings['descriptionYOffset'], maxWidth, 18)
+                        wrapText(ctx, description, 256, settings['descriptionYOffset'] + ((numberOfTitleLines - 1) * settings["titleLineHeight"]), maxWidth, settings['descriptionLineHeight'])
                     }
 
                     if (options.Canvas && options.format === 'image/jpeg') {
@@ -136,6 +137,7 @@
 
             let inRulesSection = false;
             finalLines.forEach((line, index) => inRulesSection = writeCharacters(context, line, x, (y + (index * lineHeight)), inRulesSection));
+            return finalLines.length;
         }
 
         function getLines(ctx, text, maxWidth) {
@@ -254,6 +256,8 @@
             selectedChampion: null,
             titleYOffset: 324,
             descriptionYOffset: 364,
+            titleLineHeight: 26,
+            descriptionLineHeight: 18,
         };
 
         let arenaJsonData = null;
@@ -595,6 +599,16 @@
             <label for="titleYOffset">Title Y Offset</label>
             <input type="range" min="0" max="600" value="324" class="slider" id="titleYOffset" oninput="updateCanvasVariable(parseInt(this.value), 'titleYOffset')">
             <output name="titleYOutput" for="titleYOffset">324</output>
+        </form>
+        <form class="sliderForm" oninput="titleLineHeightOutput.value = settings['titleLineHeight']">
+            <label for="titleLineHeight">Title Line Height</label>
+            <input type="range" min="0" max="64" value="26" class="slider" id="titleLineHeight" oninput="updateCanvasVariable(parseInt(this.value), 'titleLineHeight')">
+            <output name="titleLineHeightOutput" for="titleLineHeight">26</output>
+        </form>
+        <form class="sliderForm" oninput="descriptionLineHeightOutput.value = settings['descriptionLineHeight']">
+            <label for="descriptionLineHeight">Description Line Height</label>
+            <input type="range" min="0" max="64" value="18" class="slider" id="descriptionLineHeight" oninput="updateCanvasVariable(parseInt(this.value), 'descriptionLineHeight')">
+            <output name="descriptionLineHeightOutput" for="descriptionLineHeight">18</output>
         </form>
     </div>
 
