@@ -532,7 +532,14 @@
         async function setLanguage(value) {
             settings['language'] = value;
             await getAugmentData();
-            setSelectedAugment(settings['selectedAugment']['id'])
+            setSelectedAugment(settings['selectedAugment']['id']);
+
+            // Fix an issue where changing language breaks searching augments
+            const augmentsList = document.getElementById("augmentsList");
+            augmentsList.innerHTML = "";
+            displayAugments(arenaJsonData);
+            filterAugments();
+
             mergeAugmentImages();
         }
 
