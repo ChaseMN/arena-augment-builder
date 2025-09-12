@@ -165,14 +165,23 @@
 
         const colorTable = {
             scaleBonus: "#c9aa71",
-            magicDamage: "#00B0F0",
+            magicDamage: "#52CBD1",
             physicalDamage: "orange",
             recast: "rgb(255,143,97)",
             rules: "rgb(255, 255, 255, 0.4)",
-            healing: "#60b087",
-            shield: '#70b3b4',
+            healing: "#85C7A0",
+            shield: '#6BCED1',
             status: '#b29cc0',
-            spellName: '#dad2b5'
+            spellName: '#dad2b5',
+			attackSpeed: '#ffe78c',
+			speed: '#EFF0C9',
+			af: '#8347ff',
+			scaleAD: '#E6944C',
+			scaleAP: '#877CFC',
+			onhit: '#DEDED3',
+			red: '#FF2121',
+			blue: '574FFF',
+			keywordMajor: '#D7D99E'
         }
 
         function writeCharacters(ctx, str, x, y, inRulesSection) {
@@ -251,13 +260,13 @@
             augmentDescription: "",
             iconXOffset: 156,
             iconYOffset: 40,
-            titleFont: "bold 24px LolBeautfortBold",
-            descriptionFont: "14px LolBeautfort",
+            titleFont: "bold 36px LolBeautfortBold",
+            descriptionFont: "20px LolBeautfort",
             selectedChampion: null,
-            titleYOffset: 324,
-            descriptionYOffset: 364,
-            titleLineHeight: 26,
-            descriptionLineHeight: 18,
+            titleYOffset: 286,
+            descriptionYOffset: 320,
+            titleLineHeight: 32,
+            descriptionLineHeight: 22,
             language: 'en_us',
         };
 
@@ -279,13 +288,13 @@
         }
 
         function setDefaultTitleFont() {
-            settings['titleFont'] = "bold 24px LolBeautfortBold";
-            document.getElementById("titleFontInput").value = "bold 24px LolBeautfortBold";
+            settings['titleFont'] = "bold 36px LolBeautfortBold";
+            document.getElementById("titleFontInput").value = "bold 36px LolBeautfortBold";
         }
 
         function setDefaultDescriptionFont() {
-            settings['descriptionFont'] = "14px LolBeautfort";
-            document.getElementById("descriptionFontInput").value = "16px LolBeautfort";
+            settings['descriptionFont'] = "20px LolBeautfort";
+            document.getElementById("descriptionFontInput").value = "20px LolBeautfort";
         }
 
         function createAugmentButton(augmentData) {
@@ -640,18 +649,18 @@
         <input name="titleFontInput" id="titleFontInput" oninput="updateCanvasVariable(this.value, 'titleFont')"/>
         <form class="sliderForm" oninput="titleYOutput.value = settings['titleYOffset']">
             <label for="titleYOffset">Title Y Offset</label>
-            <input type="range" min="0" max="600" value="324" class="slider" id="titleYOffset" oninput="updateCanvasVariable(parseInt(this.value), 'titleYOffset')">
-            <output name="titleYOutput" for="titleYOffset">324</output>
+            <input type="range" min="0" max="600" value="286" class="slider" id="titleYOffset" oninput="updateCanvasVariable(parseInt(this.value), 'titleYOffset')">
+            <output name="titleYOutput" for="titleYOffset">286</output>
         </form>
         <form class="sliderForm" oninput="titleLineHeightOutput.value = settings['titleLineHeight']">
             <label for="titleLineHeight">Title Line Height</label>
-            <input type="range" min="0" max="64" value="26" class="slider" id="titleLineHeight" oninput="updateCanvasVariable(parseInt(this.value), 'titleLineHeight')">
-            <output name="titleLineHeightOutput" for="titleLineHeight">26</output>
+            <input type="range" min="0" max="64" value="32" class="slider" id="titleLineHeight" oninput="updateCanvasVariable(parseInt(this.value), 'titleLineHeight')">
+            <output name="titleLineHeightOutput" for="titleLineHeight">32</output>
         </form>
         <form class="sliderForm" oninput="descriptionLineHeightOutput.value = settings['descriptionLineHeight']">
             <label for="descriptionLineHeight">Description Line Height</label>
-            <input type="range" min="0" max="64" value="18" class="slider" id="descriptionLineHeight" oninput="updateCanvasVariable(parseInt(this.value), 'descriptionLineHeight')">
-            <output name="descriptionLineHeightOutput" for="descriptionLineHeight">18</output>
+            <input type="range" min="0" max="64" value="22" class="slider" id="descriptionLineHeight" oninput="updateCanvasVariable(parseInt(this.value), 'descriptionLineHeight')">
+            <output name="descriptionLineHeightOutput" for="descriptionLineHeight">22</output>
         </form>
     </div>
 
@@ -666,8 +675,8 @@
         <input name="descriptionFontInput" id="descriptionFontInput" oninput="updateCanvasVariable(this.value, 'descriptionFont')"/>
         <form class="sliderForm" oninput="descriptionYOutput.value = settings['descriptionYOffset']">
             <label for="descriptionYOffset">Description Y Offset</label>
-            <input type="range" min="0" max="600" value="364" class="slider" id="descriptionYOffset" oninput="updateCanvasVariable(parseInt(this.value), 'descriptionYOffset')">
-            <output name="descriptionYOutput" for="descriptionYOffset">364</output>
+            <input type="range" min="0" max="600" value="320" class="slider" id="descriptionYOffset" oninput="updateCanvasVariable(parseInt(this.value), 'descriptionYOffset')">
+            <output name="descriptionYOutput" for="descriptionYOffset">320</output>
         </form>
     </div>
 
@@ -696,11 +705,15 @@
 
     @font-face {
         font-family: LolBeautfort;
-        src: url('./fonts/BeaufortforLOL-Regular.ttf') format('truetype');
+        src: url('./fonts/BeaufortforLOL-Medium.ttf') format('truetype');
     }
     @font-face {
         font-family: LolBeautfortBold;
         src: url('./fonts/BeaufortforLOL-Bold.ttf') format('truetype');
+    }
+    @font-face {
+        font-family: LolBeautfortReg;
+        src: url('./fonts/BeaufortforLOL-Regular.ttf') format('truetype');
     }
 
     .list {
